@@ -1,14 +1,26 @@
-print("This is a file from GH repository")
-print("These are new local changes")
-print("These are new local 3changes")
+import requests
+import time
 
+API_URL = 'https://api.telegram.org/bot'
+BOT_TOKEN = '5424991242:AAGwomxQz1p46bRi_2m3V7kvJlt5RjK9xr0'
+TEXT = 'Ура! Классный апдейт!'
+MAX_COUNTER = 100
 
+offset = -2
+counter = 0
+chat_id: int
 
-def say_hel():
-    print("Hellow")
+while counter < MAX_COUNTER:
 
-say_hel()
+    print('attempt =', counter)  #Чтобы видеть в консоли, что код живет
 
+    updates = requests.get(f'{API_URL}{BOT_TOKEN}/getUpdates?offset={offset + 1}').json()
 
-print("These are new local ch 52435 4anges")
-print("These are new local 45 345 changes")
+    if updates['result']:
+        for result in updates['result']:
+            offset = result['update_id']
+            chat_id = result['message']['from']['id']
+            requests.get(f'{API_URL}{BOT_TOKEN}/sendMessage?chat_id={chat_id}&text={TEXT}')
+
+    time.sleep(1)
+    counter += 1
